@@ -3,7 +3,7 @@ package frc.robot.common;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 /*------------------------Imports------------------------------------*/
 import com.ctre.phoenix.motorcontrol.SensorCollection;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix6.configs.CANcoderConfiguration; // OLD: import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -25,8 +25,8 @@ public class RobotMap {
 	// Initialize devices
 
 	// Motor controllers use canIDS for parameters
-	public static WPI_TalonFX leftAft = new WPI_TalonFX(0);
-	public static WPI_TalonFX leftFront = new WPI_TalonFX(1);
+	public static TalonFX leftAft = new TalonFX(0);
+	public static WPI_TalonFX leftFront = new TalonFX(1);
 	public static WPI_TalonFX rightAft = new WPI_TalonFX(2);
 	public static WPI_TalonFX rightFront = new WPI_TalonFX(3);
 
