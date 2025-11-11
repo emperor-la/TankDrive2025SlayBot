@@ -20,18 +20,23 @@ import static frc.robot.common.RobotMap.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
+
 // Start of robot code, declare variables to be used in robot code here
 @SuppressWarnings("FieldCanBeLocal")
 public class Robot extends TimedRobot {
+  // private static
   private static boolean press = false;
   public static boolean overide = false;
   double fineControlSpeedDouble = .6;
@@ -58,12 +63,12 @@ public class Robot extends TimedRobot {
     intakeWheel.configFactoryDefault();
     storageLeft.configFactoryDefault();
     storageRight.configFactoryDefault();
-    flywheel.configFactoryDefault();
+    flywheel.getConfigurator().apply(new TalonFXConfiguration()); //Changed from .configFactoryDefault -> .getConfigurator().apply(new TalonFXConfiguration());
 
-    leftAft.configFactoryDefault();
-    leftFront.configFactoryDefault();
-    rightAft.configFactoryDefault();
-    rightFront.configFactoryDefault();
+    leftAft.getConfigurator().apply(new TalonFXConfiguration());
+    leftFront.getConfigurator().apply(new TalonFXConfiguration());
+    rightAft.getConfigurator().apply(new TalonFXConfiguration());
+    rightFront.getConfigurator().apply(new TalonFXConfiguration());
 
     innerClimbLeft.configFactoryDefault();
     innerClimbRight.configFactoryDefault();
@@ -128,7 +133,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("limelight angle", limelightTable.getEntry("ty").getDouble(0));
     SmartDashboard.putNumber("limelight distance", getDistance());
     SmartDashboard.putNumber("Target distance", 160);
-    SmartDashboard.putBoolean("Flywheel Ready", flywheel.getSelectedSensorVelocity() > 13300);
+    SmartDashboard.putBoolean("Flywheel Ready", flywheel.getVelocity().getValueAsDouble() > 13300); //change from .getSelectedSensorVelocity -> .getVelocity().getValueAsDouble()
    // innerClimbLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     //SmartDashboard.putNumber("InnerClimbLeft Encoder", innerClimbLeft.getSelectedSensorPosition());
     // System.out.println(SmartDashboard.getNumber("Target distance",160));
@@ -157,7 +162,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
    // double position = innerClimbLeft.getSelectedSensorPosition();
-   SmartDashboard.putNumber("RPM", flywheel.getSelectedSensorVelocity());
+   SmartDashboard.putNumber("RPM", flywheel.getVelocity().getValueAsDouble()); //change from .getSelectedSensorVelocity -> .getVelocity().getValueAsDouble()
 
     compressor.enableDigital();
     
@@ -186,9 +191,9 @@ public class Robot extends TimedRobot {
     
     
     if (m_xbox.getBButton() == true) {
-      storageGroup.set(.60);
+      m_drive.arcadeDrive(.60,0);
     } else {
-      storageGroup.set(0);
+      m_drive.arcadeDrive(0,0);
     }
 
     overide = false;
@@ -252,20 +257,20 @@ public class Robot extends TimedRobot {
     // This axis in range from 0 to 1
     // If the state is greater that 0, set Flywheel motor controller at 70% power
     // If the state is 0 or lower, set Flywheel motor controller at 0% power
-    flywheel.set(ControlMode.PercentOutput,0);
+    flywheel.setControl(m_request.withOutput(0));   // Changed from .set(ControlMode.PercentOutput. blah blah); m_request can be found in RobotMap.java
     if (m_xbox.getRightTriggerAxis() > 0.2){
-      flywheel.set(ControlMode.PercentOutput, 0.7 * m_xbox.getRightTriggerAxis());
+      flywheel.setControl(m_request.withOutput(0.7* m_xbox.getRightTriggerAxis())); 
     }
     //flywheel.set(m_xbox.getRightTriggerAxis()*0.65); 
     if (m_joy.getRawButton(8)){
-      flywheel.set(ControlMode.PercentOutput,-0.2);
+      flywheel.setControl(m_request.withOutput(-0.2));
     }
     if (m_joy.getRawButtonReleased(8)){
-      flywheel.set(ControlMode.PercentOutput,0);
+      flywheel.setControl(m_request.withOutput(0));
     }
     if (m_xbox.getYButton()){
-      if (flywheel.getSelectedSensorVelocity() > 15000){
-        storageGroup.set(0.6);
+      if (flywheel.getVelocity().getValueAsDouble() > 15000){
+        m_drive.arcadeDrive(0.6, 0);
       }
     }
 
@@ -343,14 +348,14 @@ public class Robot extends TimedRobot {
       alignDist(85);
     }
     else if (m_timer.get() < T4){
-     flywheel.set(ControlMode.PercentOutput, 0.70);
+     flywheel.setControl(m_request.withOutput(0.70)); //
       if (m_timer.get() > T5){
-        storageGroup.set(0.6);
+        m_drive.arcadeDrive(0.6,0);
       }
     }
     else{
-      flywheel.set(ControlMode.PercentOutput,0);
-      storageGroup.set(0);
+      flywheel.setControl(m_request.withOutput(0)); //
+      m_drive.arcadeDrive(0,0);
     }
   }
 
@@ -373,9 +378,9 @@ public class Robot extends TimedRobot {
      //alignDist(105);
     }
     else if (m_timer.get() < T2){
-      flywheel.set(ControlMode.PercentOutput, 0.65);
+      flywheel.setControl(m_request.withOutput(0.65));
       if (m_timer.get() > T3){
-        storageGroup.set(0.6);
+        m_drive.arcadeDrive(0.6,0);
       }
     }
     else if (m_timer.get() < T4){ //move back
@@ -384,9 +389,9 @@ public class Robot extends TimedRobot {
     }
     else if (m_timer.get() < T5){ //turn left
       //System.out.println("moving lef");
-      flywheel.set(ControlMode.PercentOutput, 0.0);
+      flywheel.setControl(m_request.withOutput(0.0));
       m_drive.curvatureDrive(0, 0.36, true);
-      storageGroup.set(0);
+      m_drive.arcadeDrive(0,0);
      
     }
     else if (m_timer.get() < T6){ //intake ball 2
@@ -398,14 +403,14 @@ public class Robot extends TimedRobot {
     }
     else if (m_timer.get() < T8){ // move forward
       m_drive.curvatureDrive(-0.3,0, false);
-      storageGroup.set(0.35);
+      m_drive.arcadeDrive(0.35,0);
     }
     else if (m_timer.get() < T9){
-      flywheel.set(ControlMode.PercentOutput, 0.65);
-      storageGroup.set(0);
+      flywheel.setControl(m_request.withOutput(0.65));
+      m_drive.arcadeDrive(0,0);
       if (m_timer.get() > T10){
         System.out.println("storage moving");
-        storageGroup.set(0.6);
+        m_drive.arcadeDrive(0.6,0);
        // intakeWheel.set(ControlMode.PercentOutput, 0.6);
       }    
     }   
