@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
@@ -70,6 +71,9 @@ public class Robot extends TimedRobot {
     rightAft.getConfigurator().apply(new TalonFXConfiguration());
     rightFront.getConfigurator().apply(new TalonFXConfiguration());
 
+    leftFront.setControl(new Follower(leftAft.getDeviceID(), false));
+    rightFront.setControl(new Follower(rightAft.getDeviceID(), false));
+
     innerClimbLeft.configFactoryDefault();
     innerClimbRight.configFactoryDefault();
     outerClimbLeft.configFactoryDefault();
@@ -86,8 +90,8 @@ public class Robot extends TimedRobot {
     // Invert certain motors depending on which direction they need to go
     // Clock wise is default
     intakeWheel.setInverted(true);
-    rightAft.setInverted(true);
-    rightFront.setInverted(true);
+    // rightAft.setInverted(true);
+    // rightFront.setInverted(true);
     storageLeft.setInverted(true);
     storageRight.setInverted(true);
     outerClimbRight.setInverted(true);

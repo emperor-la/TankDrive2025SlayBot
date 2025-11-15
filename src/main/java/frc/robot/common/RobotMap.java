@@ -29,14 +29,14 @@ public class RobotMap {
 	// Initialize devices
 
 	// Motor controllers use canIDS for parameters
-	public static TalonFX leftAft = new TalonFX(0);
+	public static TalonFX leftAft = new TalonFX(2);
 	public static TalonFX leftFront = new TalonFX(1);
-	public static TalonFX rightAft = new TalonFX(2);
+	public static TalonFX rightAft = new TalonFX(4);
 	public static TalonFX rightFront = new TalonFX(3);
 
-	public static WPI_VictorSPX intakeWheel = new WPI_VictorSPX(4);
-	public static WPI_VictorSPX storageLeft = new WPI_VictorSPX(5);
-	public static WPI_VictorSPX storageRight = new WPI_VictorSPX(6);
+	public static WPI_VictorSPX intakeWheel = new WPI_VictorSPX(41);
+	public static WPI_VictorSPX storageLeft = new WPI_VictorSPX(51);
+	public static WPI_VictorSPX storageRight = new WPI_VictorSPX(61);
 	public static TalonFX flywheel = new TalonFX(7);
 
 	public static WPI_TalonSRX innerClimbLeft = new WPI_TalonSRX(10);
